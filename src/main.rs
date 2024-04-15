@@ -1,5 +1,17 @@
-use std::env;
-use std::io::{self, BufRead, Write};
+use std::io::{self, BufRead, BufReader, Write};
+use std::fs;
+use clap::Parser;
+
+#[derive(Parser)]
+struct Arguments {
+    rotate_by : i64,
+
+    #[clap(short, long)]
+    input_file_path : Option<String>,
+
+    #[clap(short, long)]
+    output_file_path : Option<String>,
+}
 
 fn do_rotate<Input: BufRead, Output: Write>(
     input_stream: &mut Input,
@@ -23,15 +35,19 @@ fn do_rotate<Input: BufRead, Output: Write>(
 }
 
 fn main() -> Result<(), std::io::Error> {
-    let args: Vec<String> = env::args().collect();
+    let args = Arguments::parse();
 
-    let mut in_handle = io::stdin().lock();
-    let mut out_handle = io::stdout().lock();
+    let mut in_handle: Box<dyn BufRead> = match args.input_file_path {
+        None => Box::new(io::stdin().lock()),
+        Some(filename) => Box::new(BufReader::new(fs::File::open(filename)?)),
+    };
 
-    args[1]
-        .parse::<i64>()
-        .map_err(|t| std::io::Error::new(io::ErrorKind::InvalidInput, t))
-        .and_then(|rotate_by| do_rotate(&mut in_handle, &mut out_handle, rotate_by).map(|_| ()))
+    let mut out_handle: Box<dyn Write> = match args.output_file_path {
+        None => Box::new(io::stdout().lock()),
+        Some(filename) => Box::new(fs::File::create(filename)?),
+    };
+
+    do_rotate(&mut in_handle, &mut out_handle, args.rotate_by).map(|_| ())
 }
 
 #[cfg(test)]
