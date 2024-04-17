@@ -52,12 +52,17 @@ fn main() -> Result<(), std::io::Error> {
 
 #[cfg(test)]
 mod tests {
-    // Note this useful idiom: importing names from outer (for mod tests) scope.
-    //use super::*;
+    use crate::do_rotate;
 
     #[test]
     fn test_do_rotate() {
-        // TODO
-        assert_eq!(1, 1)
+        let mut test_input: &[u8] = b"abcdefg".as_slice();
+        let mut test_output: Vec<u8> = Vec::new();
+
+        let expected: Vec<u8> = Vec::from(b"bcdefgh");
+
+        _ = do_rotate(&mut test_input, &mut test_output, 1);
+
+        assert_eq!(test_output, expected);
     }
 }
