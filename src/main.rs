@@ -2,10 +2,9 @@ use std::io::{self, BufRead, BufReader, Write};
 use std::fs;
 use clap::Parser;
 
-
-fn do_rotate<Input: BufRead, Output: Write>(
-    input_stream: &mut Input,
-    output_stream: &mut Output,
+fn do_rotate(
+    input_stream: &mut dyn BufRead,
+    output_stream: &mut dyn Write,
     rotate_by: i64,
 ) -> std::result::Result<(), std::io::Error> {
     loop {
