@@ -2,16 +2,6 @@ use std::io::{self, BufRead, BufReader, Write};
 use std::fs;
 use clap::Parser;
 
-#[derive(Parser)]
-struct Arguments {
-    rotate_by : i64,
-
-    #[clap(short, long)]
-    input_file_path : Option<String>,
-
-    #[clap(short, long)]
-    output_file_path : Option<String>,
-}
 
 fn do_rotate<Input: BufRead, Output: Write>(
     input_stream: &mut Input,
@@ -32,6 +22,17 @@ fn do_rotate<Input: BufRead, Output: Write>(
         output_stream.write_all(to_write.as_slice())?;
         input_stream.consume(read_bytes_num);
     }
+}
+
+#[derive(Parser)]
+struct Arguments {
+    rotate_by : i64,
+
+    #[clap(short, long)]
+    input_file_path : Option<String>,
+
+    #[clap(short, long)]
+    output_file_path : Option<String>,
 }
 
 fn main() -> Result<(), std::io::Error> {
