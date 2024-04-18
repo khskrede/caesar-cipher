@@ -1,4 +1,4 @@
-use clap::Parser;
+use clap::{Args, Parser, Subcommand};
 use std::fs;
 use std::io::{self, BufRead, BufReader, Write};
 
@@ -24,6 +24,29 @@ fn do_rotate(
 }
 
 #[derive(Parser)]
+struct Cli {
+    #[command(subcommand)]
+    command: Command,
+}
+
+#[derive(Subcommand)]
+enum Command {
+    /// Encrypt input data using key
+    Encrypt {
+        key: i64,
+        input_file_path: Option<String>,
+        output_file_path: Option<String>,
+    },
+
+    /// Decrypt input data using key
+    Decrypt {
+        key: i64,
+        input_file_path: Option<String>,
+        output_file_path: Option<String>,
+    },
+}
+
+#[derive(Args)]
 struct Arguments {
     rotate_by: i64,
 
@@ -35,19 +58,32 @@ struct Arguments {
 }
 
 fn main() -> Result<(), std::io::Error> {
-    let args = Arguments::parse();
+    let args = Cli::parse();
 
-    let mut in_handle: Box<dyn BufRead> = match args.input_file_path {
+    let (rotate_by, input_file_path, output_file_path) = match args.command {
+        Command::Encrypt {
+            key,
+            input_file_path,
+            output_file_path,
+        } => (key, input_file_path, output_file_path),
+        Command::Decrypt {
+            key,
+            input_file_path,
+            output_file_path,
+        } => (-key, input_file_path, output_file_path),
+    };
+
+    let mut in_handle: Box<dyn BufRead> = match input_file_path {
         None => Box::new(io::stdin().lock()),
         Some(filename) => Box::new(BufReader::new(fs::File::open(filename)?)),
     };
 
-    let mut out_handle: Box<dyn Write> = match args.output_file_path {
+    let mut out_handle: Box<dyn Write> = match output_file_path {
         None => Box::new(io::stdout().lock()),
         Some(filename) => Box::new(fs::File::create(filename)?),
     };
 
-    do_rotate(&mut in_handle, &mut out_handle, args.rotate_by).map(|_| ())
+    do_rotate(&mut in_handle, &mut out_handle, rotate_by).map(|_| ())
 }
 
 #[cfg(test)]
