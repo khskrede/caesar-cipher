@@ -1,6 +1,6 @@
-use std::io::{self, BufRead, BufReader, Write};
-use std::fs;
 use clap::Parser;
+use std::fs;
+use std::io::{self, BufRead, BufReader, Write};
 
 fn do_rotate(
     input_stream: &mut dyn BufRead,
@@ -25,13 +25,13 @@ fn do_rotate(
 
 #[derive(Parser)]
 struct Arguments {
-    rotate_by : i64,
+    rotate_by: i64,
 
     #[clap(short, long)]
-    input_file_path : Option<String>,
+    input_file_path: Option<String>,
 
     #[clap(short, long)]
-    output_file_path : Option<String>,
+    output_file_path: Option<String>,
 }
 
 fn main() -> Result<(), std::io::Error> {
@@ -62,6 +62,30 @@ mod tests {
         let expected: Vec<u8> = Vec::from(b"bcdefgh");
 
         _ = do_rotate(&mut test_input, &mut test_output, 1);
+
+        assert_eq!(test_output, expected);
+    }
+
+    #[test]
+    fn test_do_rotate_with_negative() {
+        let mut test_input: &[u8] = b"bcdefgh".as_slice();
+        let mut test_output: Vec<u8> = Vec::new();
+
+        let expected: Vec<u8> = Vec::from(b"abcdefg");
+        _ = do_rotate(&mut test_input, &mut test_output, -1);
+
+        assert_eq!(test_output, expected);
+    }
+
+    // Write a test that operates on non-alphanumeric characters
+    #[test]
+    fn test_do_rotate_non_alphanum() {
+        let mut test_input: &[u8] = [0, 255].as_slice();
+        let mut test_output: Vec<u8> = Vec::new();
+
+        let expected: Vec<u8> = Vec::from([255, 254].as_slice());
+
+        _ = do_rotate(&mut test_input, &mut test_output, -1);
 
         assert_eq!(test_output, expected);
     }
