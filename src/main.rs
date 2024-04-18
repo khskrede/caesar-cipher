@@ -89,4 +89,17 @@ mod tests {
 
         assert_eq!(test_output, expected);
     }
+
+    // Write a test that operates on empty input
+    #[test]
+    fn test_do_rotate_empty_input() {
+        let mut test_input: &[u8] = [].as_slice();
+        let mut test_output: Vec<u8> = Vec::new();
+
+        let expected: Vec<u8> = Vec::new();
+
+        _ = do_rotate(&mut test_input, &mut test_output, 1);
+
+        assert_eq!(test_output, expected);
+    }
 }
