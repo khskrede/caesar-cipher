@@ -1,14 +1,13 @@
 # Usage
 
 ```
-./caesar-cipher --help
-Usage: caesar-cipher [OPTIONS] <ROTATE_BY>
+Usage: caesar-cipher <COMMAND>
 
-Arguments:
-  <ROTATE_BY>  
+Commands:
+  encrypt  Encrypt input data using key
+  decrypt  Decrypt input data using key
+  help     Print this message or the help of the given subcommand(s)
 
 Options:
-  -i, --input-file-path <INPUT_FILE_PATH>    
-  -o, --output-file-path <OUTPUT_FILE_PATH>  
-  -h, --help                                 Print help
+  -h, --help  Print help
 ```
