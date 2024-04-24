@@ -11,14 +11,18 @@ enum Command {
     /// Encrypt input data using key
     Encrypt {
         key: i64,
+        #[arg(short, long)]
         input_file_path: Option<String>,
+        #[arg(short, long)]
         output_file_path: Option<String>,
     },
 
     /// Decrypt input data using key
     Decrypt {
         key: i64,
+        #[arg(short, long)]
         input_file_path: Option<String>,
+        #[arg(short, long)]
         output_file_path: Option<String>,
     },
 }
